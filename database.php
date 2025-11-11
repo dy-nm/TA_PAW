@@ -32,7 +32,7 @@ function login()
         }
         exit;
     } else {
-        echo "<script>alert('Username atau password salah!'); window.location='login.php';</script>";
+        echo "<script>alert('Username atau password salah!'); window.location='index.php';</script>";
     }
 }
 
@@ -52,7 +52,7 @@ function register($array)
             ':nama'     => $array['nama']
         ]);
 
-        echo "<script>alert('Registrasi berhasil! Silakan login.'); window.location='login.php';</script>";
+        echo "<script>alert('Registrasi berhasil! Silakan login.'); window.location='index.php';</script>";
     } else {
         echo "<script>alert('Username sudah terdaftar!'); window.location='register.php';</script>";
     }
