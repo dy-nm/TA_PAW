@@ -75,7 +75,7 @@ $user = $query->fetch();
         </nav>
         <div class="user">
             <a href="profil.php" class="nama-user">
-                <?= htmlspecialchars($_SESSION['nama']) ?>
+                <?= ($_SESSION['nama']) ?>
             </a>
             <a href="logout.php" class="logout">Logout</a>
         </div>
