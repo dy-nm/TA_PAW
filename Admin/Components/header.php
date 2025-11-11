@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin</title>
+    <link rel="stylesheet" href="Asset/Css/style.css">
+</head>
+<body>
+<header>
+    <div class="logo">Admin | PPDB Online</div>
+    <div class="menu">
+        <a href="index.php?page=jurusan">Jurusan</a>
+        <a href="index.php?page=kamar">Kamar</a>
+        <a href="#" class="logout">Logout</a>
+    </div>
+</header>
+<main class="content">
