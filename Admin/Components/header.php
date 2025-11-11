@@ -10,13 +10,13 @@
 <header>
     <div class="logo">Admin | PPDB Online</div>
     <div class="menu">
+        <a href="index.php?page=pendaftar">Pendaftar</a>
         <a href="index.php?page=jurusan">Jurusan</a>
         <a href="index.php?page=kamar">Kamar</a>
     </div>
     <div class="top-kanan">
         <a href="index.php?page=profil" class="prof"><?= $_SESSION['nama']?></a>
         <a href="#" class="logout">Logout</a>
-
     </div>
 </header>
 <main class="content">

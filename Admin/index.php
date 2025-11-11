@@ -1,7 +1,9 @@
 <?php
 session_start();
-require_once 'Components/database.php';
-require_once 'Components/header.php';
+
+require_once '../conn.php';
+require_once BASE_PATH.'/Admin/Components/database.php';
+require_once BASE_PATH.'/Admin/Components/header.php';
 ?>
 
 <!-- <h1>Daftar Akun Terdaftar</h1> -->

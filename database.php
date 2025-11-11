@@ -1,6 +1,5 @@
 <?php
 require_once 'conn.php';
-require_once 'base.php';
 
 // User Login
 function login()
@@ -21,7 +20,6 @@ function login()
 
         $_SESSION['username'] = $data['USERNAME'];
         $_SESSION['nama']     = $data['NAMA'];
-        $_SESSION['role']     = $data['ROLE'];
         $_SESSION['role']     = $data['ROLE'];
 
 

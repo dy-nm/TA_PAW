@@ -1,5 +1,5 @@
 <?php
-require_once '../conn.php';
+require_once BASE_PATH.'/Admin/Components/validate.inc';
 
 function getAllUsers(){
     $users = DBC->prepare("SELECT * FROM users WHERE ROLE = 0");
@@ -68,7 +68,7 @@ function tolakSiswa(){
 
 // Daftar Kamar
 function getAllKamar(){
-    $kamar = DBC->prepare("SELECT kamar.*, COUNT(pendaftaran.ID_KAMAR) AS jumlah FROM kamar LEFT JOIN pendaftaran ON kamar.ID_KAMAR = pendaftaran.ID_KAMAR GROUP BY kamar.ID_KAMAR;
+    $kamar = DBC->prepare("SELECT kamar.*, COUNT(pendaftaran.ID_KAMAR) AS jumlah FROM kamar LEFT JOIN pendaftaran ON kamar.ID_KAMAR = pendaftaran.ID_KAMAR WHERE kamar.KAPASITAS > 0 GROUP BY kamar.ID_KAMAR;
     "); 
     $kamar->execute();
     return $kamar->fetchAll();
@@ -139,11 +139,29 @@ function getSiswaJurusan(){
 // Update Profile Admin
 function updateProfileAdmin($array){
     // Cek username
-    $cek = cek_username($array['username']);
-    $update = 
-}
+    $errors = [];
+    $rePass = "/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]+$/";
+    $reNama = "/^[a-zA-Z]*$/";
+    validasi_jumlah($errors,$array,'pass',8,"Password minimal berjumlah 8 karakter");
+    validate($errors,$array,'nama',$reNama,"Nama Hanya Mengandung Alfabet","Nama");
+    validate($errors,$array,'pass',$rePass,"Password Kombinasi huruf dan angka","Password");
+    if(!$errors){
+        $update = DBC->prepare("UPDATE users SET NAMA = :nama, PASSWORD = :pass WHERE username = :username");
+        $update->execute([
+            ':nama' => $array['nama'],
+            ':pass' => md5($array['pass']),
+            ':username' => $_SESSION['username']
+        ]);
 
-// Cek username
-function cek_username($username){
-    
+        if($update->rowCount()>0){
+            $_SESSION['nama']     = $array['nama'];
+            $_SESSION['msg_sc'] = 'Data Berhasil Diupdate!';
+        }else{
+            $_SESSION['msg_err'] = 'Data Gagal Diupdate!';
+        }
+    }else{
+        $_SESSION['msg_err'] = $errors;
+    }
+    header("Location:index.php?page=profil");
+    exit;
 }
