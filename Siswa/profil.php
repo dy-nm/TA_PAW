@@ -29,7 +29,7 @@ $user = $stmt->fetch();
         <nav class="menu">
             <a href="index.php">Home</a>
             <a href="#">riwayat Pendaftaran</a>
-            <a href="#">Pendaftaran</a>
+            <a href="pendaftaran.php">Pendaftaran</a>
             <a href="edit_profil.php" class="btn">Edit Profil</a>
         </nav>
         <div class="user">
