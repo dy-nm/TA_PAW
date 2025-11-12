@@ -4,8 +4,11 @@ if(!defined('APP_SECURE')){
     die();
 }
 $jurusan = getAllJurusan();
-if($_SERVER['REQUEST_METHOD']=='POST'){
+if(isset($_POST['tambah'])){
     tambahJurusan($_POST);
+}
+if(isset($_POST['edit'])){
+    editJurusan($_POST);
 }
 if(isset($_GET['hapus'])){
     hapusJurusan();
@@ -16,14 +19,29 @@ if(isset($_GET['hapus'])){
         <div class="page"><a href="index.php">Dashboard</a> / Jurusan</div>
         <h1>Daftar Jurusan</h1><br>
     </div>
-    <?php if(isset($_SESSION['msg'])):?>
-        <div class="kanan">
-            <span class="success-alert"><?= $_SESSION['msg']?> </span>
-        </div>
-        <?php
-        unset($_SESSION['msg']);
-        ?>
-    <?php endif?>
+    <div class="kanan">
+        <?php if(isset($_SESSION['msg'])):?>
+                <span class="success-alert"><?= $_SESSION['msg']?> </span>
+                <?php
+            unset($_SESSION['msg']);
+            ?>
+        <?php endif?>
+        <?php if(isset($_GET['edit'])):?>
+            <?php
+            $dtl_jurusan = getJurusanName();
+            ?>
+        <form action="" method="POST" class="frkamar editjurusan">
+            <label for="nama">Nama Jurusan</label>
+            <input type="hidden" name="id" value="<?= $dtl_jurusan['ID_JURUSAN'] ?>">
+            <input type="text" id="nama" value="<?= $dtl_jurusan['NAMA_JURUSAN'] ?>" name="jurusan"><br>
+            <label for="kapasitas">Detail Jurusan</label>
+            <input type="text" id="kapasitas" name="dtl" value="<?= $dtl_jurusan['DETAIL_JURUSAN'] ?>"><br>
+            <div class="btn">
+                <button type="submit" class="btn-tambah" name="edit">Edit</button>
+            </div>
+        </form>
+        <?php endif?>
+    </div>
 </div>
 <a href="index.php?page=jurusan&add" class="show">Tambah Jurusan Baru</a>
 <?php if(isset($_GET['add'])):?>
@@ -32,7 +50,7 @@ if(isset($_GET['hapus'])){
     <input type="text" id="nama" name="jurusan"><br>
     <label for="kapasitas">Detail Jurusan</label>
     <input type="text" id="kapasitas" name="dtl"><br>
-    <button type="submit" class="btn-tambah">Tambah</button>
+    <button type="submit" class="btn-tambah" name="tambah">Tambah</button>
 </form>
 <?php endif?>
 <table>
@@ -55,9 +73,8 @@ if(isset($_GET['hapus'])){
             <td><?= $km['DETAIL_JURUSAN'] ?></td>
             <td><?= $km['jumlah'] ?></td>
             <td>
-                <?php if($km['jumlah']>0):?>
                 <a href="index.php?page=siswa_jurusan&id=<?= $km['ID_JURUSAN'] ?>" class="lihat">Lihat</a>
-                <?php endif?>
+                <a href="index.php?page=jurusan&id=<?= $km['ID_JURUSAN'] ?>&edit" class="show-edit">Edit</a>
                 <a href="index.php?page=jurusan&id=<?= $km['ID_JURUSAN'] ?>&hapus" class="hps">Hapus</a>
             </td>
         </tr>

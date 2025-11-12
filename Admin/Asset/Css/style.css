@@ -119,8 +119,7 @@ a.edit-button{
     color: rgb(47, 135, 127); /* Secondary */
     margin-bottom: 1rem;
 }
-.profile-card .avatar {
-    width: 100px;
+.avatar>img{width: 100px;
     height: 100px;
     border-radius: 50%;
     background-color: rgb(140, 220, 210); /* Accent */
@@ -130,8 +129,9 @@ a.edit-button{
     justify-content: center;
     font-size: 3rem;
     color: white;
-    border: 3px solid rgb(93, 199, 187); /* Primary */
+    border: 3px solid rgb(93, 199, 187); 
 }
+
 .profile-info {
     text-align: left;
     margin-top: 1.5rem;
@@ -177,7 +177,7 @@ a.acc, a.dec, a.show{
     outline: none;
     border-radius: 5px;
 }
-a.hps, a.lihat{
+a.hps, a.lihat, a.show-edit{
     text-decoration: none;
     width: 30px;
     padding: 5px;
@@ -192,6 +192,10 @@ a.hps, a.lihat{
 }
 .lihat{
     background-color: #41A67E;
+    color:#DDF4E7;
+}
+.show-edit{
+    background-color: #4E61D3;
     color:#DDF4E7;
 }
 .acc{
@@ -369,4 +373,11 @@ p.ttl{
 .forbidden > p{
     color: #41A67E;
     font-size: 35px;
+}
+.editjurusan > .btn{
+    /* position: sticky; */
+    /* right: 0; */
+    margin-top: 5px;
+    display: flex;
+    justify-content: end;
 }

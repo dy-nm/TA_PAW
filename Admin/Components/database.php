@@ -17,7 +17,7 @@ function getAllPendaftar(){
 }
 
 function getDetailUser(){
-    $user = DBC->prepare("SELECT pendaftaran.*, users.NAMA, jurusan.*,kamar.KAMAR FROM pendaftaran JOIN users ON pendaftaran.USERNAME = users.USERNAME JOIN jurusan ON jurusan.ID_JURUSAN = pendaftaran.ID_JURUSAN JOIN kamar ON pendaftaran.ID_KAMAR = kamar.ID_KAMAR WHERE pendaftaran.USERNAME = :username");
+    $user = DBC->prepare("SELECT pendaftaran.*, users.NAMA,users.FOTO_SISWA, jurusan.*,kamar.KAMAR FROM pendaftaran JOIN users ON pendaftaran.USERNAME = users.USERNAME JOIN jurusan ON jurusan.ID_JURUSAN = pendaftaran.ID_JURUSAN JOIN kamar ON pendaftaran.ID_KAMAR = kamar.ID_KAMAR WHERE pendaftaran.USERNAME = :username");
     $user->execute([':username' => $_GET['user']]);
     return $user->fetch();
 }
@@ -54,13 +54,15 @@ function terimaSiswa(){
             ':user'=>$_GET['user']
         ]);
     }else{
-        echo "Kamar penuh";
+        $_SESSION['msg_err'] = 'Semua Kamar Telah Penuh!';
     }
+    header("Location:index.php?page=detail&user=".$_GET['user']);
+    exit;
 }
 
 // Siswa Ditolak
 function tolakSiswa(){
-    $tolak = DBC->prepare("UPDATE pendaftaran SET STATUS_DAFTAR = 2 WHERE USERNAME = :user");
+    $tolak = DBC->prepare("UPDATE pendaftaran SET STATUS_DAFTAR = 2,ID_KAMAR = 1 WHERE USERNAME = :user");
     $tolak->execute([
         ':user'=>$_GET['user']
     ]);
@@ -114,11 +116,24 @@ function tambahJurusan($array){
     }
 }
 
+// Edit jurusan
+function editJurusan($array){
+    $update = DBC->prepare("UPDATE jurusan SET NAMA_JURUSAN = :nama, DETAIL_JURUSAN = :detail WHERE ID_JURUSAN = :id");
+    $update->execute([
+        ':nama' => $array['jurusan'],
+        ':detail'=>$array['dtl'],
+        ':id' => $array['id']
+    ]);
+    header("Location:index.php?page=jurusan");
+    exit;
+}
+
 function getJurusanName(){
     $jurusan = DBC->prepare("SELECT * FROM jurusan WHERE ID_JURUSAN = :id");
     $jurusan->execute([':id' =>$_GET['id']]);
     return $jurusan->fetch();
 }
+
 
 // Hapus Jurusan
 function hapusJurusan(){

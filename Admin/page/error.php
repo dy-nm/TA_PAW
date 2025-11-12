@@ -10,7 +10,7 @@
     <div class="forbidden">
         <h1>403</h1>
         <p>Access Forbidden!</p>
-        <span>&copy; PAW PAW2025-1-D03 Team</span>
+        <span>&copy; PAW2025-1-D03 Team</span>
 
     </div>
 </body>

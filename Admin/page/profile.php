@@ -24,7 +24,9 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
     <?php endif?>
 </div>
 <div class="profile-card">
-    <div class="avatar">A</div>
+    <div class="avatar">
+        <img src="<?=BASE_URL.'Admin/Asset/Img/profile.png'?>" alt="">
+    </div>
     <h2><?= $_SESSION['nama'] ?></h2>
     <p style="color: rgb(93, 199, 187);"><?= $_SESSION['username'] ?></p>
     <form action="" method="POST">
