@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'database.php';
-
+$db = constant("DBC");
 $username = $_SESSION['username'];
 $user = getUserByUsername($username);
 if (!isset($_SESSION['username'])) {
@@ -11,8 +11,30 @@ if (!isset($_SESSION['username'])) {
 
 require_once '../conn.php';
 
+// Ambil daftar jurusan dari database untuk dropdown
+$jurusan_query = $db->prepare("SELECT * FROM jurusan");
+$jurusan_query->execute();
+$jurusan_list = $jurusan_query->fetchAll();
+
+// Fungsi untuk mencari kamar dengan kapasitas tersedia
+function getAvailableKamar($db) {
+    $query = $db->query("
+        SELECT k.ID_KAMAR, k.KAMAR, k.KAPASITAS, 
+               COUNT(p.ID_DAFTAR) AS total_penghuni
+        FROM kamar k
+        LEFT JOIN pendaftaran p ON p.ID_KAMAR = k.ID_KAMAR
+        GROUP BY k.ID_KAMAR
+        HAVING total_penghuni < k.KAPASITAS
+        ORDER BY k.ID_KAMAR ASC
+        LIMIT 1
+    ");
+    return $query->fetch(PDO::FETCH_ASSOC);
+}
+
+
+
+
 if (isset($_POST['submit'])) {
-    // $username = $_SESSION['username'];
     $nisn = $_POST['nisn'];
     $nama_ayah = $_POST['nama_ayah'];
     $nama_ibu = $_POST['nama_ibu'];
@@ -23,15 +45,19 @@ if (isset($_POST['submit'])) {
     $jenis_kelamin = $_POST['jenis_kelamin'];
     $telp = $_POST['telp'];
     $telp_ortu = $_POST['telp_ortu'];
+    $id_jurusan = $_POST['id_jurusan'];
 
-    $db = constant("DBC");
+    // ====== 1️⃣ Tentukan kamar otomatis ======
+    $kamar = getAvailableKamar($db);
+    $id_kamar = $kamar ? $kamar['ID_KAMAR'] : null;
 
     // ====== 1️⃣ Simpan ke tabel pendaftaran ======
     $query = $db->prepare("INSERT INTO pendaftaran 
-        (NISN, NAMA_AYAH, NAMA_IBU, ALAMAT, ASAL_SEKOLAH, TEMPAT_LAHIR, TANGGAL_LAHIR, JENIS_KELAMIN, TELP, TELP_ORTU, STATUS_DAFTAR)
-        VALUES (:nisn,:nama_ayah,:nama_ibu,:alamat,:asal_sekolah,:tempat_lahir,:tanggal_lahir,:jenis_kelamin,:telp,:telp_ortu, 'P')");
+        (USERNAME,ID_JURUSAN,ID_KAMAR,NISN,NAMA_AYAH, NAMA_IBU, ALAMAT, ASAL_SEKOLAH, TEMPAT_LAHIR, TANGGAL_LAHIR, JENIS_KELAMIN, TELP, TELP_ORTU, STATUS_DAFTAR)
+        VALUES (:username,:id_jurusan,:id_kamar,:nisn,:nama_ayah,:nama_ibu,:alamat,:asal_sekolah,:tempat_lahir,:tanggal_lahir,:jenis_kelamin,:telp,:telp_ortu, 0)");
 
     // $query->bindValue(':username', $username);
+    $query->bindValue(':username', $_SESSION['username']);
     $query->bindValue(':nisn', $nisn);
     $query->bindValue(':nama_ayah', $nama_ayah);
     $query->bindValue(':nama_ibu', $nama_ibu);
@@ -42,6 +68,8 @@ if (isset($_POST['submit'])) {
     $query->bindValue(':jenis_kelamin', $jenis_kelamin);
     $query->bindValue(':telp', $telp);
     $query->bindValue(':telp_ortu', $telp_ortu);
+    $query->bindValue(':id_jurusan', $id_jurusan);
+    $query->bindValue(':id_kamar', $id_kamar);
     $query->execute();
 
     if ($query->rowCount() > 0) {
@@ -50,13 +78,14 @@ if (isset($_POST['submit'])) {
         // ====== 2️⃣ Upload 5 berkas PDF ======
         $berkas_labels = [
             'Ijazah',
-            'Raport',
+            'Surat Sehat',
             'Kartu Keluarga',
             'Akte Lahir',
-            'KTP Orang Tua'
+            'Surat Pernyataan'
+
         ];
 
-        $upload_dir = '../assets/uploads_berkas/';
+        $upload_dir = '../assets/uploads/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
@@ -78,7 +107,7 @@ if (isset($_POST['submit'])) {
 
                 if (move_uploaded_file($file_tmp, $target_path)) {
                     $stmt = $db->prepare("INSERT INTO berkas_siswa (ID_DAFTAR, NAMA_BERKAS, BERKAS) VALUES (?, ?, ?)");
-                    $stmt->execute([$id_daftar, $label, $target_path]);
+                    $stmt->execute([$id_daftar, $label, $new_name]);
                 }
             }
         }
@@ -159,6 +188,19 @@ if (isset($_POST['submit'])) {
 
             <label>No. Telp Orang Tua:</label>
             <input type="text" name="telp_ortu">
+<<<<<<< HEAD
+
+            <label>Jurusan:</label>
+            <select name="id_jurusan">
+                <option value="">-- Pilih Jurusan --</option>
+                <?php foreach ($jurusan_list as $jur): ?>
+                    <option value="<?= $jur['ID_JURUSAN']; ?>">
+                        <?= $jur['NAMA_JURUSAN']; ?> - <?= $jur['DETAIL_JURUSAN']; ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+=======
+>>>>>>> 893d4c9727b9c2175fa07a41a9b09782c4c644a1
 
             <h3>Unggah Berkas (PDF Saja)</h3>
             <label>1. Ijazah:</label>
