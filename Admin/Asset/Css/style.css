@@ -271,6 +271,8 @@ input:focus {
   padding: 12px 16px;
   border-radius: 8px;
   font-weight: 500;
+    animation: fadeOut 3s ease forwards;
+
 }
 
 .danger-alert {
@@ -281,6 +283,8 @@ input:focus {
   border-radius: 8px;
   margin-bottom: 20px;
   font-weight: 500;
+    animation: fadeOut 3s ease forwards;
+
 }
 
 .prof{
@@ -387,4 +391,52 @@ p.ttl{
     margin-top: 5px;
     display: flex;
     justify-content: end;
+}
+.alert-message {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    font-weight: 500;
+    text-align: center;
+    width: fit-content;
+    max-width: 90%;
+    animation: fadeOut 3s ease forwards;
+}
+
+.alert-message.sukses {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-message.info {
+    background: #cce5ff;
+    color: #004085;
+    border: 1px solid #b8daff;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+    }
 }

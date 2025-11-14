@@ -4,9 +4,8 @@ if(!defined('APP_SECURE')){
     die();
 }
 $kamar = getAllKamar();
-if($_SERVER['REQUEST_METHOD']=='POST'){
-    tambahKamar();
-    header("Location:index.php?page=kamar");
+if(isset($_POST['tambah'])){
+    tambahKamar($_POST);
 }
 if(isset($_POST['edit'])){
     editKamar($_POST);
@@ -20,12 +19,24 @@ if(isset($_GET['hapus'])){
         <div class="page"><a href="index.php">Dashboard</a> / Kamar</div>
         <h1>Daftar Kamar</h1><br>
     </div>
-    <?php if(isset($_SESSION['msg'])):?>
+    <?php if(isset($_SESSION['msg_sc'])):?>
         <div class="kanan">
-            <span class="success-alert"><?= $_SESSION['msg']?> </span>
+            <span class="success-alert"><?= $_SESSION['msg_sc']?> </span>
         </div>
         <?php
-        unset($_SESSION['msg']);
+        unset($_SESSION['msg_sc']);
+        ?>
+    <?php endif?>
+    <?php if(isset($_SESSION['msg_err'])):?>
+        <div class="kanan">
+        <?php
+        ?>
+        <?php foreach($_SESSION['msg_err'] as $err ):?>
+            <div class="danger-alert"><?=$err?></div>
+        <?php endforeach?>
+        </div>
+        <?php
+        unset($_SESSION['msg_err']);
         ?>
     <?php endif?>
        <?php if(isset($_GET['edit'])):?>
@@ -35,9 +46,9 @@ if(isset($_GET['hapus'])){
         <form action="" method="POST" class="frkamar editjurusan">
             <label for="nama">Nama Kamar</label>
             <input type="hidden" name="id" value="<?= $dtl_kamar['ID_KAMAR'] ?>">
-            <input type="text" id="nama" value="<?= $dtl_kamar['KAMAR'] ?>" name="jurusan"><br>
+            <input type="text" id="nama" value="<?= $dtl_kamar['KAMAR'] ?>" name="kamar"><br>
             <label for="kapasitas">Kapasitas</label>
-            <input type="text" id="kapasitas" name="dtl" value="<?= $dtl_kamar['KAPASITAS'] ?>"><br>
+            <input type="text" id="kapasitas" name="kapasitas" value="<?= $dtl_kamar['KAPASITAS'] ?>"><br>
             <div class="btn">
                 <button type="submit" class="btn-tambah" name="edit">Edit</button>
             </div>
@@ -51,7 +62,7 @@ if(isset($_GET['hapus'])){
     <input type="text" id="nama" name="kamar"><br>
     <label for="kapasitas">Kapasitas</label>
     <input type="text" id="kapasitas" name="kapasitas"><br>
-    <button type="submit" class="btn-tambah">Tambah</button>
+    <button type="submit" name="tambah" class="btn-tambah">Tambah</button>
 </form>
 <?php endif?>
 <table>

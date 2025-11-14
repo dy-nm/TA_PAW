@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
                 <input type="text" name="nama" class="profile-form" value="<?= $_SESSION['nama'] ?>">
             </div>
             <div>
-                <strong>Password Baru</strong>
+                <span><strong>Password Baru</strong><br>(Kosongkan jika tidak ingin diganti)</span>
                 <input type="password" name="pass" class="profile-form">
             </div>
             <div>
@@ -49,4 +49,4 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
             </div>
         </div>
     </form>
-</div>
+</div>  

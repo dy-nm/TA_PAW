@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require_once '../conn.php';
 if(!isset($_SESSION['role'])){
     header('Location:'.BASE_URL);
@@ -9,6 +10,13 @@ if(!isset($_SESSION['role'])){
 define('APP_SECURE', true);
 require_once BASE_PATH.'/Admin/Components/database.php';
 require_once BASE_PATH.'/Admin/Components/header.php';
+if (isset($_SESSION['pesan'])) {
+    $tipe = $_SESSION['pesan']['tipe'] ?? 'info';
+    $teks = $_SESSION['pesan']['teks'] ?? '';
+
+    echo "<div class='alert-message {$tipe}'>{$teks}</div>";
+    unset($_SESSION['pesan']);
+}
 ?>
 
 <!-- <h1>Daftar Akun Terdaftar</h1> -->
