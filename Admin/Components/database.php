@@ -286,3 +286,9 @@ function getAllSiswa(){
     $siswa->execute();
     return $siswa->fetchAll();
 }
+function getBerkasByPendaftaran($id_daftar)
+{
+    $bq = DBC->prepare("SELECT NAMA_BERKAS, BERKAS FROM BERKAS_SISWA WHERE ID_DAFTAR = :id");
+    $bq->execute([':id' => $id_daftar]);
+    return $bq->fetchAll();
+}

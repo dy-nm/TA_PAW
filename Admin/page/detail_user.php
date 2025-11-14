@@ -14,6 +14,8 @@ if(isset($_GET['terima'])){
     pendingSiswa();
     header("Location:index.php?page=detail&user=".$_GET['user']);
 }
+$berkas = getBerkasByPendaftaran($user['ID_DAFTAR']);
+
 ?>
 <div class="alert-msg-prof">
     <?php if(isset($_SESSION['msg_err'])):?>
@@ -67,26 +69,14 @@ if(isset($_GET['terima'])){
             <strong>Asal Sekolah</strong>
             <span><?= $user['ASAL_SEKOLAH'] ?></span>
         </div>
-        <div>
-            <strong>Kartu Keluarga</strong>
-            <span><a href="" class="show">Lihat</a></span>
-        </div>
-        <div>
-            <strong>Akta Kelahiran</strong>
-            <span><a href="" class="show">Lihat</a></span>
-        </div>
-        <div>
-            <strong>Ijazah</strong>
-            <span><a href="" class="show">Lihat</a></span>
-        </div>
-        <div>
-            <strong>Surat Sehat</strong>
-            <span><a href="" class="show">Lihat</a></span>
-        </div>
-        <div>
-            <strong>Surat Pernyataan</strong>
-            <span><a href="" class="show">Lihat</a></span>
-        </div>
+        <?php if ($berkas): ?>
+            <?php foreach ($berkas as $b): ?>
+                <div>
+                    <strong><?= ($b['NAMA_BERKAS']); ?></strong>
+                    <span><a href="../assets/uploads/<?= ($b['BERKAS']); ?>" target="_blank" class="show">Lihat</a></span>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
         <div>
             <strong>Status Daftar</strong>
             <?php if($user['STATUS_DAFTAR'] == 0){?>

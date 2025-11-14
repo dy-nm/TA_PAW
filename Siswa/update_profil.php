@@ -4,7 +4,7 @@ require_once '../conn.php';
 
 $username = $_SESSION['username'];
 $nama = $_POST['nama'];
-$password = md5($_POST['password']);
+$password = $_POST['password'];
 
 $fotoBaru = $_FILES['foto']['name'];
 $fotoTmp  = $_FILES['foto']['tmp_name'];
@@ -19,7 +19,7 @@ if (!empty($fotoBaru)) {
         $stmt = DBC->prepare("UPDATE USERS SET NAMA=:nama, PASSWORD=:pass, FOTO_SISWA=:foto WHERE USERNAME=:user");
         $stmt->execute([
             ':nama' => $nama,
-            ':pass' => $password,
+            ':pass' => md5($password),
             ':foto' => $namaFile,
             ':user' => $username
         ]);
@@ -37,7 +37,7 @@ if (!empty($fotoBaru)) {
         $stmt = DBC->prepare("UPDATE USERS SET NAMA=:nama, PASSWORD=:pass WHERE USERNAME=:user");
         $stmt->execute([
             ':nama' => $nama,
-            ':pass' => $password,
+            ':pass' => md5($password),
             ':user' => $username
         ]);
     } else {
