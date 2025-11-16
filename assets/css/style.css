@@ -134,3 +134,11 @@ input::placeholder {
         display: none;
     }
 }
+
+.errors {
+    color: #b60000;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 10px;   
+    margin-top: 3px;       
+}

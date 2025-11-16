@@ -68,3 +68,10 @@ button:hover {
     max-width: 90%;
     animation: fadeOut 3s ease forwards;
 }
+
+.errors {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}

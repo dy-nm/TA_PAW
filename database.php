@@ -43,43 +43,56 @@ function login()
         exit;
     }
 }
-
-
 function register($array)
 {
-    session_start();
+    require_once 'validate.inc';
 
-    // Cek apakah username sudah terdaftar
-    $cek = cekUsername($array['username']);
-    if ($cek == 0) {
-        $register = DBC->prepare("
-            INSERT INTO USERS (USERNAME, PASSWORD, NAMA, FOTO_SISWA, ROLE)
-            VALUES (:username, md5(:pass), :nama, NULL, '0')
-        ");
-        $register->execute([
-            ':username' => $array['username'],
-            ':pass'     => $array['password'],
-            ':nama'     => $array['nama']
-        ]);
+    $errors = [];
 
+    $nama     = trim($array['nama']);
+    $username = trim($array['username']);
+    $password = trim($array['password']);
 
-        $_SESSION['pesan'] = [
-            'tipe' => 'sukses',
-            'teks' => '✅ Registrasi berhasil! Silakan login.'
-        ];
-        header("Location: login.php");
-        exit;
-    } else {
+    // Validasi
+    cekNamaDaftar($nama, $errors);
+    cekUsernameDaftar($username, $errors);
+    cekPasswordDaftar($password, $errors);
 
-        $_SESSION['pesan'] = [
-            'tipe' => 'error',
-            'teks' => '⚠️ Username sudah terdaftar!'
-        ];
-        header("Location: register.php");
-        exit;
+    if (cekUsername($username) > 0) {
+        $errors['username'] = "Username sudah terdaftar!";
     }
-}
 
+    if (!empty($errors)) {
+        return [
+            'status' => 'error',
+            'errors' => $errors,
+            'old'    => [
+                'nama'     => $nama,
+                'username' => $username
+            ]
+        ];
+    }
+
+    // Insert DB
+    $register = DBC->prepare("
+        INSERT INTO USERS (USERNAME, PASSWORD, NAMA, FOTO_SISWA, ROLE)
+        VALUES (:username, md5(:pass), :nama, NULL, '0')
+    ");
+
+    $register->execute([
+        ':username' => $username,
+        ':pass'     => $password,
+        ':nama'     => $nama
+    ]);
+
+    $_SESSION['pesan'] = [
+        'tipe' => 'sukses',
+        'teks' => 'Registrasi berhasil! Silakan login.'
+    ];
+
+    header("Location: login.php");
+    exit;
+}
 
 // Cek Ketersediaan USERNAME
 function cekUsername($username)

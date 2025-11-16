@@ -2,28 +2,26 @@
 session_start();
 require_once 'conn.php';
 require_once 'database.php';
+require_once 'validate.inc';
 
+// Jika form disubmit → proses register()
+$hasil  = [];
+$errors = [];
+$old    = [];
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $hasil = register($_POST);
+    $errors = $hasil['errors'] ?? [];
+    $old    = $hasil['old']    ?? [];
+}
 
+// Tampilkan pesan sukses (bukan error validasi)
 if (isset($_SESSION['pesan'])) {
-    $tipe = $_SESSION['pesan']['tipe'];
-    $teks = $_SESSION['pesan']['teks'];
-
-    $warnaBg  = ($tipe === 'sukses') ? '#d4edda' : '#f8d7da';
-    $warnaTxt = ($tipe === 'sukses') ? '#155724' : '#721c24';
+    $tipe = $_SESSION['pesan']['tipe'] ?? 'info';
+    $teks = $_SESSION['pesan']['teks'] ?? '';
 
     echo "<div class='alert-message {$tipe}'>{$teks}</div>";
     unset($_SESSION['pesan']);
-}
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $data = [
-        'username' => $_POST['username'],
-        'nama'     => $_POST['nama'],
-        'password' => $_POST['password']
-    ];
-    register($data);
 }
 ?>
 <!DOCTYPE html>
@@ -44,13 +42,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <form method="POST" action="" autocomplete="off">
                 <label>Nama Lengkap</label>
-                <input type="text" name="nama" placeholder="Nama Lengkap" >
+                <input type="text"
+                       name="nama"
+                       placeholder="Nama Lengkap"
+                       value="<?= htmlspecialchars($old['nama'] ?? '') ?>">
+                <span class="errors"><?= $errors['nama'] ?? '' ?></span>
+
 
                 <label>Username</label>
-                <input type="text" name="username" placeholder="isi username anda" >
+                <input type="text"
+                       name="username"
+                       placeholder="isi username anda"
+                       value="<?= htmlspecialchars($old['username'] ?? '') ?>">
+                <span class="errors"><?= $errors['username'] ?? '' ?></span>
+
 
                 <label>Password</label>
-                <input type="password" name="password" placeholder="Password" >
+                <input type="password"
+                       name="password"
+                       placeholder="Password">
+                <span class="errors"><?= $errors['password'] ?? '' ?></span>
 
                 <button type="submit">Register</button>
             </form>
