@@ -46,8 +46,8 @@ $user = getUserByUsername($username);
         </nav>
         <div class="user">
             <a href="profil.php">
-                <?php if (!empty($user['FOTO_SISWA'])): ?>
-                    <img src="../assets/uploads/<?= htmlspecialchars($user['FOTO_SISWA']); ?>" alt="Foto Profil">
+                <?php if (!empty($user['FOTO'])): ?>
+                    <img src="../assets/uploads/<?= htmlspecialchars($user['FOTO']); ?>" alt="Foto Profil">
                 <?php else: ?>
                     <img src="../assets/image/default.jpeg" alt="Foto Default">
                 <?php endif; ?>

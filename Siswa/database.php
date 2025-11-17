@@ -18,7 +18,7 @@ function getPendaftaranByUser($username)
 {
     $stmt = DBC->prepare("
         SELECT 
-            U.NAMA, U.FOTO_SISWA, U.USERNAME,
+            U.NAMA, U.FOTO, U.USERNAME,
             P.ID_DAFTAR, P.NISN, P.ALAMAT, P.NAMA_AYAH, P.NAMA_IBU,
             P.TELP, P.TELP_ORTU, P.JENIS_KELAMIN, P.ASAL_SEKOLAH, 
             P.TEMPAT_LAHIR, P.TANGGAL_LAHIR, P.STATUS_DAFTAR, P.CREATED_AT,

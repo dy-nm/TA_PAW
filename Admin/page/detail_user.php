@@ -27,7 +27,7 @@ $berkas = getBerkasByPendaftaran($user['ID_DAFTAR']);
 </div>
 <div class="profile-card">
     <div class="avatar">
-        <img src="<?=BASE_URL.'/assets/uploads/'.$user['FOTO_SISWA'] ?>" alt="">
+        <img src="<?=BASE_URL.'/assets/uploads/'.$user['FOTO'] ?>" alt="">
     </div>
     <h2><?= $user['NAMA'] ?></h2>
     <p style="color: rgb(93, 199, 187);"><?= $user['USERNAME'] ?></p>

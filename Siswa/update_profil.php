@@ -16,7 +16,7 @@ if (!empty($fotoBaru)) {
     move_uploaded_file($fotoTmp, $targetDir);
 
     if (!empty($password)) {
-        $stmt = DBC->prepare("UPDATE USERS SET NAMA=:nama, PASSWORD=:pass, FOTO_SISWA=:foto WHERE USERNAME=:user");
+        $stmt = DBC->prepare("UPDATE USERS SET NAMA=:nama, PASSWORD=:pass, FOTO=:foto WHERE USERNAME=:user");
         $stmt->execute([
             ':nama' => $nama,
             ':pass' => md5($password),
@@ -24,7 +24,7 @@ if (!empty($fotoBaru)) {
             ':user' => $username
         ]);
     } else {
-        $stmt = DBC->prepare("UPDATE USERS SET NAMA=:nama, FOTO_SISWA=:foto WHERE USERNAME=:user");
+        $stmt = DBC->prepare("UPDATE USERS SET NAMA=:nama, FOTO=:foto WHERE USERNAME=:user");
         $stmt->execute([
             ':nama' => $nama,
             ':foto' => $namaFile,

@@ -33,8 +33,8 @@ $user = getUserByUsername($username);
         </nav>
         <div class="user">
             <a href="profil.php">
-                <?php if (!empty($user['FOTO_SISWA'])): ?>
-                    <img src="../assets/uploads/<?= htmlspecialchars($user['FOTO_SISWA']); ?>" alt="Foto Profil">
+                <?php if (!empty($user['FOTO'])): ?>
+                    <img src="../assets/uploads/<?= htmlspecialchars($user['FOTO']); ?>" alt="Foto Profil">
                 <?php else: ?>
                     <img src="../assets/image/default.jpeg" alt="Foto Default">
                 <?php endif; ?>
@@ -47,8 +47,8 @@ $user = getUserByUsername($username);
 
         <div class="profil-info">
             <div class="foto-box">
-                <?php if ($user['FOTO_SISWA']): ?>
-                    <img src="../assets/uploads/<?= ($user['FOTO_SISWA']); ?>" alt="Foto Profil">
+                <?php if ($user['FOTO']): ?>
+                    <img src="../assets/uploads/<?= ($user['FOTO']); ?>" alt="Foto Profil">
                 <?php else: ?>
                     <img src="../assets/image/default.jpeg" alt="Foto Default">
                 <?php endif; ?>

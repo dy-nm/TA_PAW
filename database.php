@@ -75,7 +75,7 @@ function register($array)
 
     // Insert DB
     $register = DBC->prepare("
-        INSERT INTO USERS (USERNAME, PASSWORD, NAMA, FOTO_SISWA, ROLE)
+        INSERT INTO USERS (USERNAME, PASSWORD, NAMA, FOTO, ROLE)
         VALUES (:username, md5(:pass), :nama, NULL, '0')
     ");
 

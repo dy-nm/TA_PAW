@@ -17,7 +17,7 @@ function getAllPendaftar(){
 }
 
 function getDetailUser(){
-    $user = DBC->prepare("SELECT pendaftaran.*, users.NAMA,users.FOTO_SISWA, jurusan.*,kamar.KAMAR FROM pendaftaran JOIN users ON pendaftaran.USERNAME = users.USERNAME JOIN jurusan ON jurusan.ID_JURUSAN = pendaftaran.ID_JURUSAN JOIN kamar ON pendaftaran.ID_KAMAR = kamar.ID_KAMAR WHERE pendaftaran.USERNAME = :username");
+    $user = DBC->prepare("SELECT pendaftaran.*, users.NAMA,users.FOTO, jurusan.*,kamar.KAMAR FROM pendaftaran JOIN users ON pendaftaran.USERNAME = users.USERNAME JOIN jurusan ON jurusan.ID_JURUSAN = pendaftaran.ID_JURUSAN JOIN kamar ON pendaftaran.ID_KAMAR = kamar.ID_KAMAR WHERE pendaftaran.USERNAME = :username");
     $user->execute([':username' => $_GET['user']]);
     return $user->fetch();
 }
@@ -76,7 +76,7 @@ function pendingSiswa(){
 
 // Daftar Kamar
 function getAllKamar(){
-    $kamar = DBC->prepare("SELECT kamar.*, COUNT(pendaftaran.ID_KAMAR) AS jumlah FROM kamar LEFT JOIN pendaftaran ON kamar.ID_KAMAR = pendaftaran.ID_KAMAR WHERE kamar.KAPASITAS > 0 GROUP BY kamar.ID_KAMAR;
+    $kamar = DBC->prepare("SELECT kamar.*, COUNT(pendaftaran.ID_KAMAR) AS jumlah FROM kamar LEFT JOIN pendaftaran ON kamar.ID_KAMAR = pendaftaran.ID_KAMAR WHERE kamar.ID_KAMAR != 1 GROUP BY kamar.ID_KAMAR;
     "); 
     $kamar->execute();
     return $kamar->fetchAll();
@@ -200,7 +200,7 @@ function hapusJurusan(){
     $hapus = DBC->prepare("DELETE FROM jurusan WHERE ID_JURUSAN = :id");
     $hapus->execute([':id' => $_GET['id']]);
     if($hapus->rowCount()>0){
-        $_SESSION['msg'] = 'Jurusan Berhasil Dihapus!';
+        $_SESSION['msg_sc'] = 'Juruasan Berhasil Dihapus';
         header("Location:index.php?page=jurusan");
         exit;
     }
@@ -209,7 +209,7 @@ function hapusKamar(){
     $hapus = DBC->prepare("DELETE FROM KAMAR WHERE ID_KAMAR = :id");
     $hapus->execute([':id' => $_GET['id_km']]);
     if($hapus->rowCount()>0){
-        $_SESSION['msg'] = 'Kamar Berhasil Dihapus!';
+        $_SESSION['msg_sc'] = 'Kamar Berhasil Dihapus!';
         header("Location:index.php?page=kamar");
         exit;
     }

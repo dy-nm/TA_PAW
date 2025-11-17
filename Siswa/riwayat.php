@@ -16,7 +16,6 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit;
 }
-
 $username = $_SESSION['username'];
 
 // Ambil data pendaftaran + berkas
@@ -52,8 +51,8 @@ $user = getUserByUsername($username);
         </nav>
         <div class="user">
             <a href="profil.php">
-                <?php if (!empty($user['FOTO_SISWA'])): ?>
-                    <img src="../assets/uploads/<?= ($user['FOTO_SISWA']); ?>" alt="Foto Profil">
+                <?php if (!empty($user['FOTO'])): ?>
+                    <img src="../assets/uploads/<?= ($user['FOTO']); ?>" alt="Foto Profil">
                 <?php else: ?>
                     <img src="../assets/image/default.jpeg" alt="Foto Default">
                 <?php endif; ?>
@@ -107,8 +106,8 @@ $user = getUserByUsername($username);
                     <!-- TAB 2: DATA PENDAFTARAN -->
                     <div class="tab-content" id="content2">
                         <div class="foto-siswa">
-                            <?php if (!empty($data['FOTO_SISWA'])): ?>
-                                <img src="../assets/uploads/<?= ($data['FOTO_SISWA']); ?>" alt="Foto Profil">
+                            <?php if (!empty($data['FOTO'])): ?>
+                                <img src="../assets/uploads/<?= ($data['FOTO']); ?>" alt="Foto Profil">
                             <?php else: ?>
                                 <img src="../assets/image/default.jpeg" alt="Foto Default">
                             <?php endif; ?>

@@ -33,8 +33,8 @@ $user = getUserByUsername($username);
         </nav>
         <div class="user">
             <a href="profil.php">
-                <?php if (!empty($user['FOTO_SISWA'])): ?>
-                    <img src="../assets/uploads/<?= htmlspecialchars($user['FOTO_SISWA']); ?>" alt="Foto Profil">
+                <?php if (!empty($user['FOTO'])): ?>
+                    <img src="../assets/uploads/<?= htmlspecialchars($user['FOTO']); ?>" alt="Foto Profil">
                 <?php else: ?>
                     <img src="../assets/image/default.jpeg" alt="Foto Default">
                 <?php endif; ?>
@@ -53,9 +53,9 @@ $user = getUserByUsername($username);
             <label>Foto Profil</label>
             <input type="file" name="foto" accept=".jpg,.jpeg,.png">
 
-            <?php if ($user['FOTO_SISWA']): ?>
+            <?php if ($user['FOTO']): ?>
                 <p>Foto saat ini:</p>
-                <img src="../assets/uploads/<?= ($user['FOTO_SISWA']); ?>" width="100">
+                <img src="../assets/uploads/<?= ($user['FOTO']); ?>" width="100">
             <?php endif; ?>
 
             <button type="submit" name="update">Simpan Perubahan</button>
