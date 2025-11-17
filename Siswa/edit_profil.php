@@ -45,7 +45,7 @@ $user = getUserByUsername($username);
         <h2>Edit Profil</h2>
         <form action="update_profil.php" method="POST" enctype="multipart/form-data">
             <label>Nama Lengkap</label>
-            <input type="text" name="nama" value="<?= ($user['NAMA']); ?>">
+            <input type="text" name="nama" value="<?= htmlspecialchars($user['NAMA']); ?>">
 
             <label>Password (kosongkan jika tidak diubah)</label>
             <input type="password" name="password" placeholder="Password baru">
@@ -55,7 +55,7 @@ $user = getUserByUsername($username);
 
             <?php if ($user['FOTO']): ?>
                 <p>Foto saat ini:</p>
-                <img src="../assets/uploads/<?= ($user['FOTO']); ?>" width="100">
+                <img src="../assets/uploads/<?= htmlspecialchars($user['FOTO']); ?>" width="100">
             <?php endif; ?>
 
             <button type="submit" name="update">Simpan Perubahan</button>

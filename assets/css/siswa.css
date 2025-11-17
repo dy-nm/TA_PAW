@@ -326,3 +326,42 @@ body {
     text-decoration: none;
     padding: 6px 12px;
 }
+
+
+
+/* === GAYA TABEL INFORMASI SISWA === */
+.data-grid {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid #e0f2f1;
+}
+
+.data-grid div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 1px dashed #b2dfdb;
+}
+
+.data-grid .label {
+    font-weight: 600;
+    color: #004d40;
+    flex: 1;
+    text-align: left;
+}
+
+.data-grid .label {
+    font-weight: 600;
+    color: black;
+    flex: 1;
+    text-align: left;
+}
+
+.data-grid .value {
+    flex: 1;
+    text-align: right;
+    color: black;
+}

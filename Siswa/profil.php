@@ -48,20 +48,16 @@ $user = getUserByUsername($username);
         <div class="profil-info">
             <div class="foto-box">
                 <?php if ($user['FOTO']): ?>
-                    <img src="../assets/uploads/<?= ($user['FOTO']); ?>" alt="Foto Profil">
+                    <img src="../assets/uploads/<?= htmlspecialchars($user['FOTO']); ?>" alt="Foto Profil">
                 <?php else: ?>
                     <img src="../assets/image/default.jpeg" alt="Foto Default">
                 <?php endif; ?>
             </div>
 
-            <div class="data-box">
-                <label>Username</label>
-                <input type="text" name="nama" readonly value="<?= ($user['USERNAME']); ?>">
-                <label>Nama Lengkap</label>
-                <input type="text" name="nama" readonly value="<?= ($user['NAMA']); ?>">
-                <label>Password</label>
-                <input type="password" name="password" readonly placeholder="*******">
-                <br></br>
+            <div class="data-grid">
+                <div><span class="label">Username</span><span class="value"><?= htmlspecialchars($user['USERNAME']); ?></span></div>
+                <div><span class="label">Nama Lengkap</span><strong class="value"><?= htmlspecialchars($user['NAMA']); ?></strong></div>
+                <div><span class="label">password</span><strong class="value">*******</strong></div>
                 <button type="submit"> <a href="edit_profil.php" class="edit">Edit Profil</a></button>
             </div>
         </div>
