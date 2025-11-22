@@ -12,8 +12,7 @@ const OPTIONS = [
 ];
 
 try {
-    define("DBC",new PDO("mysql:host=".HOST.";dbname=".DB_NAME, USER, PASS, OPTIONS));
-    // echo "Connected";
+    $pdo = new PDO("mysql:host=".HOST.";dbname=".DB_NAME, USER, PASS, OPTIONS);
 } catch (PDOException $e) {
     echo $e->getMessage();
     die();

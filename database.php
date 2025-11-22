@@ -8,8 +8,8 @@ function login()
 
     $username = $_POST['username'];
     $passwd   = md5($_POST['password']);
-
-    $user = DBC->prepare("SELECT * FROM USERS WHERE USERNAME = :username AND PASSWORD = :pass");
+    global $pdo;
+    $user = $pdo->prepare("SELECT * FROM USERS WHERE USERNAME = :username AND PASSWORD = :pass");
     $user->execute([
         ':username' => $username,
         ':pass'     => $passwd
@@ -72,9 +72,9 @@ function register($array)
             ]
         ];
     }
-
+global $pdo;
     // Insert DB
-    $register = DBC->prepare("
+    $register = $pdo->prepare("
         INSERT INTO USERS (USERNAME, PASSWORD, NAMA, FOTO, ROLE)
         VALUES (:username, md5(:pass), :nama, NULL, '0')
     ");
@@ -97,7 +97,8 @@ function register($array)
 // Cek Ketersediaan USERNAME
 function cekUsername($username)
 {
-    $cek = DBC->prepare("SELECT USERNAME FROM USERS WHERE USERNAME = :user");
+    global $pdo;
+    $cek = $pdo->prepare("SELECT USERNAME FROM USERS WHERE USERNAME = :user");
     $cek->execute([':user' => $username]);
     return $cek->rowCount();
 }

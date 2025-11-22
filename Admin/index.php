@@ -22,6 +22,7 @@ if (isset($_SESSION['pesan'])) {
 <!-- <h1>Daftar Akun Terdaftar</h1> -->
 <!-- <p>Ini adalah area konten utama. Anda bisa menambahkan tabel, grafik, atau komponen lainnya di sini.</p> -->
 <?php
+
 if(isset($_GET['page'])){
     $page = $_GET['page'];
     if($page == 'users'){
