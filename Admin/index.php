@@ -17,11 +17,6 @@ if (isset($_SESSION['pesan'])) {
     echo "<div class='alert-message {$tipe}'>{$teks}</div>";
     unset($_SESSION['pesan']);
 }
-?>
-
-<!-- <h1>Daftar Akun Terdaftar</h1> -->
-<!-- <p>Ini adalah area konten utama. Anda bisa menambahkan tabel, grafik, atau komponen lainnya di sini.</p> -->
-<?php
 
 if(isset($_GET['page'])){
     $page = $_GET['page'];
@@ -49,18 +44,13 @@ if(isset($_GET['page'])){
     else if($page == 'logout'){
         logout();
     }
-    
-    
-    
     else{
         require_once 'page/404.php';
     }
 }else{
     include 'page/dashboard.php';
 }
-?>
-<?php
-require_once 'Components/footer.php';
 
-?>
-   
+
+
+require_once 'Components/footer.php';
