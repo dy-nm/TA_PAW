@@ -1,14 +1,18 @@
 <?php
+
+
 require_once 'conn.php';
 
 // User Login
 function login()
 {
+    global $pdo;
     session_start();
 
     $username = $_POST['username'];
     $passwd   = md5($_POST['password']);
     global $pdo;
+
     $user = $pdo->prepare("SELECT * FROM USERS WHERE USERNAME = :username AND PASSWORD = :pass");
     $user->execute([
         ':username' => $username,
