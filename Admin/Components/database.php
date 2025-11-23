@@ -3,7 +3,7 @@ require_once BASE_PATH.'/Admin/Components/validate.inc';
 
 function getAllUsers(){
     global $pdo;
-    $users = $pdo->prepare("SELECT * FROM users WHERE ROLE = 0");
+    $users = $pdo->prepare("SELECT * FROM USERS WHERE ROLE = 0");
     $users->execute();
     return $users->fetchAll();
 }
@@ -11,37 +11,41 @@ function getAllUsers(){
 function getAllPendaftar(){
     global $pdo;
     $pendaftar = $pdo->prepare("
-    SELECT pendaftaran.NISN,pendaftaran.STATUS_DAFTAR,jurusan.NAMA_JURUSAN, jurusan.DETAIL_JURUSAN, users.NAMA,users.USERNAME 
-    FROM pendaftaran JOIN jurusan ON pendaftaran.ID_JURUSAN = jurusan.ID_JURUSAN
-    JOIN users ON pendaftaran.USERNAME = users.USERNAME ");
+    SELECT PENDAFTARAN.NISN,PENDAFTARAN.STATUS_DAFTAR,JURUSAN.NAMA_JURUSAN, JURUSAN.DETAIL_JURUSAN, USERS.NAMA,USERS.USERNAME 
+    FROM PENDAFTARAN 
+    JOIN JURUSAN ON PENDAFTARAN.ID_JURUSAN = JURUSAN.ID_JURUSAN
+    JOIN USERS ON PENDAFTARAN.USERNAME = USERS.USERNAME ");
     $pendaftar->execute();
     return $pendaftar->fetchAll();
 }
 
 function getDetailUser(){
     global $pdo;
-    $user = $pdo->prepare("SELECT pendaftaran.*, users.NAMA,users.FOTO, jurusan.*,kamar.KAMAR FROM pendaftaran JOIN users ON pendaftaran.USERNAME = users.USERNAME JOIN jurusan ON jurusan.ID_JURUSAN = pendaftaran.ID_JURUSAN JOIN kamar ON pendaftaran.ID_KAMAR = kamar.ID_KAMAR WHERE pendaftaran.USERNAME = :username");
+    $user = $pdo->prepare("SELECT PENDAFTARAN.*, USERS.NAMA,USERS.FOTO, JURUSAN.*,KAMAR.KAMAR 
+    FROM PENDAFTARAN 
+    JOIN USERS ON PENDAFTARAN.USERNAME = USERS.USERNAME 
+    JOIN JURUSAN ON JURUSAN.ID_JURUSAN = PENDAFTARAN.ID_JURUSAN 
+    JOIN KAMAR ON PENDAFTARAN.ID_KAMAR = KAMAR.ID_KAMAR 
+    WHERE PENDAFTARAN.USERNAME = :username");
     $user->execute([':username' => $_GET['user']]);
     return $user->fetch();
 }
 
-// Cek kamar mana yang kosong
 function cek_kamar(){
     global $pdo;
     $penghuni = $pdo->prepare("SELECT 
-            kamar.KAMAR,
-            kamar.ID_KAMAR,
-            kamar.KAPASITAS,
-            COUNT(pendaftaran.ID_KAMAR) AS penghuni
-        FROM kamar
-        LEFT JOIN pendaftaran 
-            ON kamar.ID_KAMAR = pendaftaran.ID_KAMAR
+            KAMAR.KAMAR,
+            KAMAR.ID_KAMAR,
+            KAMAR.KAPASITAS,
+            COUNT(PENDAFTARAN.ID_KAMAR) AS penghuni
+        FROM KAMAR
+        LEFT JOIN PENDAFTARAN 
+            ON KAMAR.ID_KAMAR = PENDAFTARAN.ID_KAMAR
         GROUP BY 
-            kamar.ID_KAMAR, kamar.KAMAR 
-        HAVING kamar.KAPASITAS > penghuni LIMIT 1");
+            KAMAR.ID_KAMAR, KAMAR.KAMAR 
+        HAVING KAMAR.KAPASITAS > penghuni LIMIT 1");
     $penghuni->execute();
     if($penghuni->rowCount()>0){
-        global $pdo;
         $kamar_kosong = $penghuni->fetch();
         return $kamar_kosong['ID_KAMAR'];
     }else{
@@ -49,13 +53,11 @@ function cek_kamar(){
     }
 }
 
-// Siswa diterima
 function terimaSiswa(){
     global $pdo;
     $kamar = cek_kamar();
     if($kamar){
-        global $pdo;
-        $terima = $pdo->prepare("UPDATE pendaftaran SET STATUS_DAFTAR = 1, ID_KAMAR = :id WHERE USERNAME = :user");
+        $terima = $pdo->prepare("UPDATE PENDAFTARAN SET STATUS_DAFTAR = 1, ID_KAMAR = :id WHERE USERNAME = :user");
         $terima->execute([
             ':id' => $kamar,
             ':user'=>$_GET['user']
@@ -67,84 +69,80 @@ function terimaSiswa(){
     exit;
 }
 
-// Siswa Ditolak
 function tolakSiswa(){
     global $pdo;
-    $tolak = $pdo->prepare("UPDATE pendaftaran SET STATUS_DAFTAR = 2,ID_KAMAR = 1 WHERE USERNAME = :user");
-    $tolak->execute([
-        ':user'=>$_GET['user']
-    ]);
-}
-function pendingSiswa(){
-    global $pdo;
-    $tolak = $pdo->prepare("UPDATE pendaftaran SET STATUS_DAFTAR = 0 WHERE USERNAME = :user");
+    $tolak = $pdo->prepare("UPDATE PENDAFTARAN SET STATUS_DAFTAR = 2,ID_KAMAR = 1 WHERE USERNAME = :user");
     $tolak->execute([
         ':user'=>$_GET['user']
     ]);
 }
 
-// Daftar Kamar
+function pendingSiswa(){
+    global $pdo;
+    $tolak = $pdo->prepare("UPDATE PENDAFTARAN SET STATUS_DAFTAR = 0 WHERE USERNAME = :user");
+    $tolak->execute([
+        ':user'=>$_GET['user']
+    ]);
+}
+
 function getAllKamar(){
     global $pdo;
-    $kamar = $pdo->prepare("SELECT kamar.*, COUNT(pendaftaran.ID_KAMAR) AS jumlah FROM kamar LEFT JOIN pendaftaran ON kamar.ID_KAMAR = pendaftaran.ID_KAMAR WHERE kamar.ID_KAMAR != 1 GROUP BY kamar.ID_KAMAR;
-    "); 
+    $kamar = $pdo->prepare("SELECT KAMAR.*, COUNT(PENDAFTARAN.ID_KAMAR) AS jumlah 
+    FROM KAMAR 
+    LEFT JOIN PENDAFTARAN ON KAMAR.ID_KAMAR = PENDAFTARAN.ID_KAMAR 
+    WHERE KAMAR.ID_KAMAR != 1 
+    GROUP BY KAMAR.ID_KAMAR");
     $kamar->execute();
     return $kamar->fetchAll();
 }
 
-// Tambah Kamar
 function tambahKamar($array){
     global $pdo;
-    $reNama = "/^[a-zA-Z0-9\s]+$/";
-    $reAngka = "/^[0-9]*$/";
     $errors = [];
-    validate($errors,$array,'kamar',$reNama,"Nama Kamar Hanya Mengandung Alfabet","Kamar");
-    validate($errors,$array,'kapasitas',$reAngka,"Kapasitas Merupakan Angka","Kapasitas");
+    validate($errors,$array,'kamar',"/^[a-zA-Z0-9\s]+$/","Nama Kamar Hanya Mengandung Alfabet","Kamar");
+    validate($errors,$array,'kapasitas',"/^[0-9]*$/","Kapasitas Merupakan Angka","Kapasitas");
     if(!$errors){
-        global $pdo;
-        $ins = $pdo->prepare("INSERT INTO kamar VALUES(NULL, :kamar, :kapasitas)");
+        $ins = $pdo->prepare("INSERT INTO KAMAR VALUES(NULL, :kamar, :kapasitas)");
         $ins->execute([
             ':kamar' => htmlspecialchars($array['kamar']),
             ':kapasitas' => htmlspecialchars($array['kapasitas'])
         ]);
         $_SESSION['msg_sc'] = 'Kamar Berhasil Ditambah';
-        
         header("Location:index.php?page=kamar");
         die;
-
     }
     return $errors;
 }
 
-// Penghuni Kamar
 function getSiswaKamar(){
     global $pdo;
-    $kamar = $pdo->prepare("SELECT pendaftaran.*, users.NAMA FROM pendaftaran JOIN users ON pendaftaran.USERNAME = users.USERNAME WHERE pendaftaran.ID_KAMAR = :id");
+    $kamar = $pdo->prepare("SELECT PENDAFTARAN.*, USERS.NAMA 
+    FROM PENDAFTARAN 
+    JOIN USERS ON PENDAFTARAN.USERNAME = USERS.USERNAME 
+    WHERE PENDAFTARAN.ID_KAMAR = :id");
     $kamar->execute([':id' => $_GET['id']]);
     return $kamar->fetchAll(); 
 }
 
-// Daftar Jurusan
 function getAllJurusan(){
     global $pdo;
-    $jurusan = $pdo->prepare("SELECT jurusan.*, COUNT(pendaftaran.ID_JURUSAN) AS jumlah FROM jurusan LEFT JOIN pendaftaran ON jurusan.ID_JURUSAN = pendaftaran.ID_JURUSAN AND pendaftaran.STATUS_DAFTAR = 1 GROUP BY jurusan.ID_JURUSAN ");
+    $jurusan = $pdo->prepare("SELECT JURUSAN.*, COUNT(PENDAFTARAN.ID_JURUSAN) AS jumlah 
+    FROM JURUSAN 
+    LEFT JOIN PENDAFTARAN ON JURUSAN.ID_JURUSAN = PENDAFTARAN.ID_JURUSAN 
+    AND PENDAFTARAN.STATUS_DAFTAR = 1 
+    GROUP BY JURUSAN.ID_JURUSAN");
     $jurusan->execute();
     return $jurusan->fetchAll();
 }
 
-// Tambah Jurusan
 function tambahJurusan(&$errors,$array){
     global $pdo;
-    $reNama = "/^[a-zA-Z\s]+$/";
-    //  = [];
-    validate($errors,$array,'jurusan',$reNama,"Nama Jurusan Hanya Mengandung Alfabet","Jurusan");
-    validate($errors,$array,'dtl',$reNama,"Detail Jurusan Hanya Mengandung Alfabet","Detail Jurusan");
+    validate($errors,$array,'jurusan',"/^[a-zA-Z\s]+$/","Nama Jurusan Hanya Mengandung Alfabet","Jurusan");
+    validate($errors,$array,'dtl',"/^[a-zA-Z\s]+$/","Detail Jurusan Hanya Mengandung Alfabet","Detail Jurusan");
     if(!$errors){
-        global $pdo;
-        $jurusan = $pdo->prepare("INSERT INTO jurusan VALUES (NULL, :nama, :detail)");
+        $jurusan = $pdo->prepare("INSERT INTO JURUSAN VALUES (NULL, :nama, :detail)");
         $jurusan->execute([':nama' => htmlspecialchars($array['jurusan']),':detail'=>htmlspecialchars($array['dtl'])]);
         if($jurusan->rowCount()>0){
-            global $pdo;
             $_SESSION['msg_sc'] = 'Jurusan Berhasil Ditambah';    
             header('Location:index.php?page=jurusan');
             die;  
@@ -153,15 +151,12 @@ function tambahJurusan(&$errors,$array){
     return $errors;
 }
 
-// Edit jurusan
 function editJurusan(&$errors,$array){
     global $pdo;
-    $reNama = "/^[a-zA-Z\s]+$/";
-    validate($errors,$array,'jurusan',$reNama,"Nama Jurusan Hanya Mengandung Alfabet","Jurusan");
-    validate($errors,$array,'dtl',$reNama,"Detail Jurusan Hanya Mengandung Alfabet","Detail Jurusan");
+    validate($errors,$array,'jurusan',"/^[a-zA-Z\s]+$/","Nama Jurusan Hanya Mengandung Alfabet","Jurusan");
+    validate($errors,$array,'dtl',"/^[a-zA-Z\s]+$/","Detail Jurusan Hanya Mengandung Alfabet","Detail Jurusan");
     if(!$errors){
-        global $pdo;
-        $update = $pdo->prepare("UPDATE jurusan SET NAMA_JURUSAN = :nama, DETAIL_JURUSAN = :detail WHERE ID_JURUSAN = :id");
+        $update = $pdo->prepare("UPDATE JURUSAN SET NAMA_JURUSAN = :nama, DETAIL_JURUSAN = :detail WHERE ID_JURUSAN = :id");
         $update->execute([
             ':nama' => $array['jurusan'],
             ':detail'=>$array['dtl'],
@@ -173,16 +168,14 @@ function editJurusan(&$errors,$array){
     }
     return $errors;
 }
+
 function editKamar($array){
     global $pdo;
     $errors = [];
-    $reNama = "/^[a-zA-Z0-9\s]+$/";
-    $reAngka = "/^[0-9]*$/";
-    validate($errors,$array,'kamar',$reNama,"Nama Kamar Hanya Mengandung Alfabet","Kamar");
-    validate($errors,$array,'kapasitas',$reAngka,"Kapasitas Merupakan Angka","Kapasitas");
+    validate($errors,$array,'kamar',"/^[a-zA-Z0-9\s]+$/","Nama Kamar Hanya Mengandung Alfabet","Kamar");
+    validate($errors,$array,'kapasitas',"/^[0-9]*$/","Kapasitas Merupakan Angka","Kapasitas");
     if(!$errors){
-        global $pdo;
-        $update = $pdo->prepare("UPDATE kamar SET KAMAR = :nama, KAPASITAS = :kapas WHERE ID_KAMAR = :id");
+        $update = $pdo->prepare("UPDATE KAMAR SET KAMAR = :nama, KAPASITAS = :kapas WHERE ID_KAMAR = :id");
         $update->execute([
             ':nama' => $array['kamar'],
             ':kapas'=>$array['kapasitas'],
@@ -193,12 +186,11 @@ function editKamar($array){
         exit;
     }
     return $errors;
-    
 }
 
 function getJurusanName(){
     global $pdo;
-    $jurusan = $pdo->prepare("SELECT * FROM jurusan WHERE ID_JURUSAN = :id");
+    $jurusan = $pdo->prepare("SELECT * FROM JURUSAN WHERE ID_JURUSAN = :id");
     $jurusan->execute([':id' =>$_GET['id']]);
     return $jurusan->fetch();
 }
@@ -210,17 +202,14 @@ function getKamarName($id){
     return $kamar->fetch();
 }
 
-// Hapus Jurusan
 function hapusJurusan(){
     global $pdo;
-    $cekJurusan = $pdo->prepare('SELECT ID_DAFTAR FROM pendaftaran WHERE ID_JURUSAN = :id');
+    $cekJurusan = $pdo->prepare('SELECT ID_DAFTAR FROM PENDAFTARAN WHERE ID_JURUSAN = :id');
     $cekJurusan->execute([':id'=>$_GET['id']]);
     if($cekJurusan->rowCount()==0){
-        global $pdo;
-        $hapus = $pdo->prepare("DELETE FROM jurusan WHERE ID_JURUSAN = :id");
+        $hapus = $pdo->prepare("DELETE FROM JURUSAN WHERE ID_JURUSAN = :id");
         $hapus->execute([':id' => $_GET['id']]);
         if($hapus->rowCount()>0){
-            global $pdo;
             $_SESSION['msg_sc'] = 'Jurusan Berhasil Dihapus';
             header("Location:index.php?page=jurusan");
             exit;
@@ -231,16 +220,15 @@ function hapusJurusan(){
         exit;
     }
 }
+
 function hapusKamar(){
     global $pdo;
-    $cekKamar = $pdo->prepare('SELECT ID_DAFTAR FROM pendaftaran WHERE ID_KAMAR = :id');
+    $cekKamar = $pdo->prepare('SELECT ID_DAFTAR FROM PENDAFTARAN WHERE ID_KAMAR = :id');
     $cekKamar->execute([':id'=>$_GET['id_km']]);
     if($cekKamar->rowCount()==0){
-        global $pdo;
         $hapus = $pdo->prepare("DELETE FROM KAMAR WHERE ID_KAMAR = :id");
         $hapus->execute([':id' => $_GET['id_km']]);
         if($hapus->rowCount()>0){
-            global $pdo;
             $_SESSION['msg_sc'] = 'Kamar Berhasil Dihapus!';
             header("Location:index.php?page=kamar");
             exit;
@@ -252,69 +240,63 @@ function hapusKamar(){
     }
 }
 
-// Menampilkan Siswa Berdasarkan Jurusan
 function getSiswaJurusan(){
     global $pdo;
-    $siswa = $pdo->prepare("SELECT pendaftaran.*, users.NAMA,kamar.KAMAR FROM pendaftaran JOIN users ON pendaftaran.USERNAME = users.USERNAME JOIN kamar ON pendaftaran.ID_KAMAR = kamar.ID_KAMAR WHERE pendaftaran.ID_JURUSAN = :id AND pendaftaran.STATUS_DAFTAR = 1");
+    $siswa = $pdo->prepare("SELECT PENDAFTARAN.*, USERS.NAMA,KAMAR.KAMAR 
+    FROM PENDAFTARAN 
+    JOIN USERS ON PENDAFTARAN.USERNAME = USERS.USERNAME 
+    JOIN KAMAR ON PENDAFTARAN.ID_KAMAR = KAMAR.ID_KAMAR 
+    WHERE PENDAFTARAN.ID_JURUSAN = :id 
+    AND PENDAFTARAN.STATUS_DAFTAR = 1");
     $siswa->execute([':id' => $_GET['id']]);
     if($siswa->rowCount()>0){
-        global $pdo;
         return $siswa->fetchAll();
     }else{
         return false;
     }
 }
 
-// Update Profile Admin
 function updateProfileAdmin($array){
     global $pdo;
-    // Cek username
     $errors = [];
     $rePass = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])\S+$/";
     $reNama = "/^[a-zA-Z\s]+$/";
     validate($errors,$array,'nama',$reNama,"Nama Hanya Mengandung Alfabet","Nama");
     if(!empty($array['pass'])){
-        global $pdo;
         validasi_jumlah($errors,$array,'pass',8,"Password minimal berjumlah 8 karakter");
         validate($errors,$array,'pass',$rePass,"Password Kombinasi huruf kecil,huruf besar, angka dan karakter khusus","Password");
         if(!$errors){
-            global $pdo;
-            $update = $pdo->prepare("UPDATE users SET NAMA = :nama, PASSWORD = :pass WHERE username = :username");
+            $update = $pdo->prepare("UPDATE USERS SET NAMA = :nama, PASSWORD = :pass WHERE username = :username");
             $update->execute([
                 ':nama' => $array['nama'],
                 ':pass' => md5($array['pass']),
                 ':username' => $_SESSION['username']
             ]);
             if($update->rowCount()>0){
-                global $pdo;
                 $_SESSION['nama']     = $array['nama'];
             }
         }
     }else{
         if(!$errors){
-            global $pdo;
-            $update = $pdo->prepare("UPDATE users SET NAMA = :nama WHERE username = :username");
+            $update = $pdo->prepare("UPDATE USERS SET NAMA = :nama WHERE username = :username");
             $update->execute([
                 ':nama' => $array['nama'],
                 ':username' => $_SESSION['username']
             ]);
             if($update->rowCount()>0){
-                global $pdo;
                 $_SESSION['nama']     = $array['nama'];
             }
         }
     }
     return $errors;
 }
+
 function unsetErr(){
-    global $pdo;
     if (isset($_SESSION['msg_err'])){
-        global $pdo;
         unset($_SESSION['msg_err']);
     }
 }
 
-// Logout
 function logout(){
     session_start();
     session_unset();
@@ -324,21 +306,21 @@ function logout(){
 
 function pendaftarTerima(){
     global $pdo;
-    $terima = $pdo->prepare("SELECT COUNT(USERNAME) AS jumlah FROM pendaftaran WHERE STATUS_DAFTAR = 1");
+    $terima = $pdo->prepare("SELECT COUNT(USERNAME) AS jumlah FROM PENDAFTARAN WHERE STATUS_DAFTAR = 1");
     $terima->execute();
     $temp = $terima->fetch();
     return $temp['jumlah'];
 }
 function pendaftarOnline(){
     global $pdo;
-    $online = $pdo->prepare("SELECT COUNT(USERNAME) AS jumlah FROM pendaftaran");
+    $online = $pdo->prepare("SELECT COUNT(USERNAME) AS jumlah FROM PENDAFTARAN");
     $online->execute();
     $temp = $online->fetch();
     return $temp['jumlah'];
 }
 function jumlahJurusan(){
     global $pdo;
-    $online = $pdo->prepare("SELECT COUNT(ID_JURUSAN) AS jumlah FROM jurusan");
+    $online = $pdo->prepare("SELECT COUNT(ID_JURUSAN) AS jumlah FROM JURUSAN");
     $online->execute();
     $temp = $online->fetch();
     return $temp['jumlah'];
@@ -346,10 +328,16 @@ function jumlahJurusan(){
 
 function getAllSiswa(){
     global $pdo;
-    $siswa = $pdo->prepare("SELECT pendaftaran.*, users.NAMA, jurusan.NAMA_JURUSAN, kamar.KAMAR FROM pendaftaran JOIN users ON pendaftaran.USERNAME = users.USERNAME JOIN jurusan ON pendaftaran.ID_JURUSAN = jurusan.ID_JURUSAN JOIN kamar ON pendaftaran.ID_KAMAR = kamar.ID_KAMAR WHERE pendaftaran.STATUS_DAFTAR = 1");
+    $siswa = $pdo->prepare("SELECT PENDAFTARAN.*, USERS.NAMA, JURUSAN.NAMA_JURUSAN, KAMAR.KAMAR 
+    FROM PENDAFTARAN 
+    JOIN USERS ON PENDAFTARAN.USERNAME = USERS.USERNAME 
+    JOIN JURUSAN ON PENDAFTARAN.ID_JURUSAN = JURUSAN.ID_JURUSAN 
+    JOIN KAMAR ON PENDAFTARAN.ID_KAMAR = KAMAR.ID_KAMAR 
+    WHERE PENDAFTARAN.STATUS_DAFTAR = 1");
     $siswa->execute();
     return $siswa->fetchAll();
 }
+
 function getBerkasByPendaftaran($id_daftar)
 {
     global $pdo;
