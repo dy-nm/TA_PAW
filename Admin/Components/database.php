@@ -1,5 +1,5 @@
 <?php
-require_once BASE_PATH.'/Admin/Components/validate.inc';
+require_once BASE_PATH.'/Admin/Components/validate.php';
 
 function getAllUsers(){
     global $pdo;
