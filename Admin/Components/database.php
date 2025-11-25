@@ -266,7 +266,7 @@ function updateProfileAdmin($array){
         validasi_jumlah($errors,$array,'pass',8,"Password minimal berjumlah 8 karakter");
         validate($errors,$array,'pass',$rePass,"Password Kombinasi huruf kecil,huruf besar, angka dan karakter khusus","Password");
         if(!$errors){
-            $update = $pdo->prepare("UPDATE USERS SET NAMA = :nama, PASSWORD = :pass WHERE username = :username");
+            $update = $pdo->prepare("UPDATE ADMIN SET NAMA_ADMIN = :nama, PASSWORD_ADMIN = :pass WHERE USERNAME_ADMIN = :username");
             $update->execute([
                 ':nama' => $array['nama'],
                 ':pass' => md5($array['pass']),
@@ -278,7 +278,7 @@ function updateProfileAdmin($array){
         }
     }else{
         if(!$errors){
-            $update = $pdo->prepare("UPDATE USERS SET NAMA = :nama WHERE username = :username");
+            $update = $pdo->prepare("UPDATE ADMIN SET NAMA_ADMIN = :nama WHERE USERNAME_ADMIN = :username");
             $update->execute([
                 ':nama' => $array['nama'],
                 ':username' => $_SESSION['username']
