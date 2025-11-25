@@ -3,7 +3,7 @@ require_once 'base.php';
 global $pdo;
 
 define("DB_HOST", "localhost");
-define("DB_NAME", "ppdb");
+define("DB_NAME", "ta_paw");
 define("DB_USER", "root");
 define("DB_PASS", "");
 

@@ -11,41 +11,66 @@ function login()
 
     $username = $_POST['username'];
     $passwd   = md5($_POST['password']);
-    global $pdo;
-
-    $user = $pdo->prepare("SELECT * FROM USERS WHERE USERNAME = :username AND PASSWORD = :pass");
-    $user->execute([
-        ':username' => $username,
-        ':pass'     => $passwd
-    ]);
-
-    if ($user->rowCount() == 1) {
-        $data = $user->fetch();
-
-        $_SESSION['username'] = $data['USERNAME'];
-        $_SESSION['nama']     = $data['NAMA'];
-        $_SESSION['role']     = $data['ROLE'];
-
-        $_SESSION['pesan'] = [
-            'tipe' => 'sukses',
-            'teks' => '✅ Selamat datang, ' . $data['NAMA'] . '!'
-        ];
-
-        if ($data['ROLE'] == '1') {
-            header("Location: Admin/index.php");
-        } else {
+    $role = $_POST['role'];
+    if($role == 'siswa'){
+        $user = $pdo->prepare("SELECT * FROM USERS WHERE USERNAME = :username AND PASSWORD = :pass");
+        $user->execute([
+            ':username' => $username,
+            ':pass'     => $passwd
+        ]);
+    
+        if ($user->rowCount() == 1) {
+            $data = $user->fetch();
+    
+            $_SESSION['username'] = $data['USERNAME'];
+            $_SESSION['nama']     = $data['NAMA'];
+    
+            $_SESSION['pesan'] = [
+                'tipe' => 'sukses',
+                'teks' => '✅ Selamat datang, ' . $data['NAMA'] . '!'
+            ];
             header("Location: Siswa/index.php");
+            exit;
+        } else {
+            // ❌ Pesan error
+            $_SESSION['pesan'] = [
+                'tipe' => 'error',
+                'teks' => '❌ Username atau password salah!'
+            ];
+            header("Location: login.php");
+            exit;
         }
-        exit;
-    } else {
-        // ❌ Pesan error
-        $_SESSION['pesan'] = [
-            'tipe' => 'error',
-            'teks' => '❌ Username atau password salah!'
-        ];
-        header("Location: login.php");
-        exit;
+    }else{
+        $user = $pdo->prepare("SELECT * FROM ADMIN WHERE USERNAME_ADMIN = :username AND PASSWORD_ADMIN = :pass");
+        $user->execute([
+            ':username' => $username,
+            ':pass'     => $passwd
+        ]);
+        if ($user->rowCount() == 1) {
+            $data = $user->fetch();
+    
+            $_SESSION['username'] = $data['USERNAME_ADMIN'];
+            $_SESSION['nama']     = $data['NAMA_ADMIN'];
+            $_SESSION['role']     = 'Admin';
+            
+            $_SESSION['pesan'] = [
+                'tipe' => 'sukses',
+                'teks' => '✅ Selamat datang, ' . $data['NAMA_ADMIN'] . '!'
+            ];
+    
+            header("Location: Admin/index.php");
+            exit;
+        } else {
+            // ❌ Pesan error
+            $_SESSION['pesan'] = [
+                'tipe' => 'error',
+                'teks' => '❌ Username atau password salah!'
+            ];
+            header("Location: login.php");
+            exit;
+        }
     }
+    
 }
 function register($array)
 {

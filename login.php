@@ -34,7 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
                 <label>Password</label>
                 <input type="password" name="password" placeholder="Password">
-
+                <select name="role" id="">
+                    <option value="siswa">Calon Siswa</option>
+                    <option value="admin">Admin</option>
+                </select>
                 <button type="submit">Login</button>
             </form>
         </div>
